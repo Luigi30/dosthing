@@ -3,7 +3,8 @@
 #include <math.h>
 
 void setPixel(char *framebuffer, int x, int y, int color){
-    framebuffer[(VGA_HEIGHT * y) + x] = color;
+    unsigned int coord = (VGA_WIDTH * y) + x;
+    framebuffer[coord] = color;
 }
 
 void init_framebuffer(char *framebuffer, UInt32 size){
@@ -31,18 +32,20 @@ void draw_point(char *framebuffer, Point point, int color){
 void draw_line(char *framebuffer, Point start, Point end, int color){
     //Draw a 1-pixel thick line between two points.
     int x_distance = end.getX() - start.getX();
+    int y_distance = end.getY() - start.getY();
 
     //is this a vertical line?
     if(x_distance == 0){
         for(int i=start.getY(); i<end.getY(); i++){
             setPixel(framebuffer, start.getX(), i, color);
         }
-    } else if (start.getY() == end.getY()) {
+    } else if (y_distance == 0) {
         //is this a horizontal line?
-        int y = start.getY() * VGA_HEIGHT;
-        for(int i=0; i<end.getX()-start.getX(); i++){
-            setPixel(framebuffer, i, y, color);
-        }
+        int y = start.getY();
+
+        for(int i=0;i<x_distance;i++) {
+            setPixel(framebuffer, start.getX() + i, y, color);
+        }        
     } else {
         //calculate slope:  y = mx + b
         double slope = getSlope(start, end);
@@ -113,7 +116,9 @@ void draw_rectangle(char *framebuffer, Point origin, int width, int height, int 
 }
 
 void draw_rectangle_filled(char *framebuffer, Point origin, int width, int height, int color){ 
-    
+    for(int i=0;i<height;i++){
+        draw_line(framebuffer, Point(origin.getX(), origin.getY() + i), Point(origin.getX() + width, origin.getY() + i), color);
+    }
 }
 
 double getSlope(Point start, Point end){

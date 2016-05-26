@@ -10,6 +10,7 @@
 
 #include <vector>
 
+#include "mouse.hpp"
 #include "colors.hpp"
 #include "fonts\font.hpp"
 #include "shapes\point.hpp"

@@ -11,15 +11,15 @@
 #define POINT_HPP
 
 class Point {
-    long x;
-    long y;
+    int x;
+    int y;
 
     public:
         Point();
-        Point(long, long);
+        Point(int, int);
         Point(char*);
-        long getX() { return x; };
-        long getY() { return y; };
+        int getX() { return x; };
+        int getY() { return y; };
 };
 
 #endif

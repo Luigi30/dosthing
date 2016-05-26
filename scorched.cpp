@@ -8,8 +8,6 @@ char *layer_final;
 void scorched_earth(){
 
     //Convert the first entry of SHAPES.DAT into a list of Points.
-    int pointsFound = 0;
-
     //Shape shape = Shape("TESTSHP", rawShapes[0]);
     
     //reset the framebuffers
@@ -21,26 +19,37 @@ void scorched_earth(){
     memset(layer_text, 0, VGA_SIZE);
     memset(layer_final, 0, VGA_SIZE);
 
-    //draw_polygon(layer_background, shapesList[0].points, shapesList[0].getNumPoints(), Point(100, 100), 0, COLOR_GREEN);
-    //draw_rectangle_filled(layer_background, Point(50,100), 100, 20, COLOR_GREEN);
+    draw_polygon(layer_background, shapesList[0].points, shapesList[0].getNumPoints(), Point(100, 100), 0, COLOR_GREEN);
+    draw_rectangle_filled(layer_background, Point(0, 160), 320, 40, COLOR_LTGRAY);
+    //draw_rectangle_filled(layer_background, Point(0, 0), 320, 200, COLOR_LTGRAY);
+
+    char str[32] = "Now we need buttons!";
+    fbPutString(layer_text, str, strlen(str), 0, 0, COLOR_WHITE, FONT_6x8);
 
     myTimerTicks = 0;
     while(true){
         if(myTimerTicks > TICKS_PER_SECOND){
-            char buffer[64];
-                        
-            sprintf(buffer, "%d points found", shapesList[0].getNumPoints());
-            fbPutString(layer_text, buffer, strlen(buffer), 0, 0, COLOR_WHITE, FONT8X8);
             break;
         }
     }
-    
-    draw_ground(layer_background);
 
+    //reset mouse
+    int mouseAttached = isMouseAttached();
+    char isMouse[32];
+    if(mouseAttached){
+        strcpy(isMouse, "Mouse detected");
+        cursorEnable();
+    } else {
+        strcpy(isMouse, "No mouse detected");
+    }
+    fbPutString(layer_text, isMouse, strlen(isMouse), 0, 8, COLOR_WHITE, FONT_6x8);
+
+    //Redraw screen
     //Painter's algorithm
     overlay_framebuffers(layer_final, layer_background, VGA_SIZE);
     overlay_framebuffers(layer_final, layer_text, VGA_SIZE);
     memcpy(VGA_PTR, layer_final, VGA_SIZE);
+    
     getch();
 
     /*
