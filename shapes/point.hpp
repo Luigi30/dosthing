@@ -1,3 +1,6 @@
+#ifndef POINT_HPP
+#define POINT_HPP
+
 #include <stdio.h>
 #include <conio.h>
 #include <string.h>
@@ -6,9 +9,6 @@
 #include <dos.h>
 #include <fcntl.h>
 #include <io.h>
-
-#ifndef POINT_HPP
-#define POINT_HPP
 
 class Point {
     int x;

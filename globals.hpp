@@ -9,13 +9,7 @@
 #define GLOBALS_HPP
 
 #include <vector>
-
-#include "mouse.hpp"
-#include "colors.hpp"
-#include "fonts\font.hpp"
-#include "shapes\point.hpp"
-#include "shapes\shapes.hpp"
-#include "scorched.hpp"
+#include <string>
 
 double PI = 3.14159265;
 
@@ -31,40 +25,25 @@ typedef signed short          Int16;
 typedef signed long           Int32;
 typedef signed long long      Int64;
 
-//VGA
-#define VGA_MEMORY 0xA000
-#define VGA_LINEAR_ADDRESS ((VGA_MEMORY) << 4)
-#define VGA_HEIGHT 200
-#define VGA_WIDTH 320
-#define VGA_SIZE (VGA_HEIGHT * VGA_WIDTH)
+#include "shapes\shapes.hpp"
 
-#define TICKS_PER_SECOND 240
-#define TICKS_PER_FRAME (TICKS_PER_SECOND / 60)
-
-//char *framebuffers[2];
-char *VGA_PTR;
-
-//Timers
-void __interrupt __far timerHandler();
-void (__interrupt __far *biosTimerHandler)();
-volatile unsigned long biosClockTicks;
-unsigned long timerReload;
-volatile unsigned long myTimerTicks;
-volatile unsigned int timer60Hz;
-volatile unsigned int timer24Hz;
+/*
+#include "colors.hpp"
+#include "defines.hpp"
+#include "scorched.hpp"
+#include "video.hpp"
+#include "mouse.hpp"
+#include "colors.hpp"
+#include "fonts\font.hpp"
+#include "shapes\point.hpp"
+#include "shapes\shapes.hpp"
+#include "video.hpp"
+#include "widgets\widget.hpp"
+#include "scorched.hpp"
+*/
 
 //Global data
 char messages[64][4];
 std::vector<Shape> shapesList;
-
-//Debug output
-void debugOutput(char *str, int len){
-    for(int i=0;i<len;i++){
-        outp(0x3F8, str[i]);
-        delay(1);
-    }
-}
-
-#define DEBUG(X) debugOutput(X, strlen(X));
 
 #endif

@@ -10,11 +10,15 @@
 #include <fcntl.h>
 #include <io.h>
 
+#include "defines.hpp"
 #include "globals.hpp"
+#include "colors.hpp"
+#include "shapes\point.hpp"
+#include "shapes\shapes.hpp"
 
-void init_framebuffer(char*, UInt32);
+void init_framebuffer(char*, int);
 void setPixel(char*, int, int, int);
-void overlay_framebuffers(char*, char*, UInt32);
+void overlay_framebuffers(char*, char*, int);
 
 //drawing routines
 void draw_point(char*, Point, int);

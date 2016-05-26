@@ -8,3 +8,5 @@
 #include <io.h>
 
 #include "globals.hpp"
+#include "defines.hpp"
+#include "scorched.hpp"

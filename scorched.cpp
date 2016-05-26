@@ -1,5 +1,4 @@
 #include "scorched.hpp"
-#include "video.hpp"
 
 char *layer_background;
 char *layer_text;
@@ -24,7 +23,7 @@ void scorched_earth(){
     //draw_rectangle_filled(layer_background, Point(0, 0), 320, 200, COLOR_LTGRAY);
 
     char str[32] = "Now we need buttons!";
-    fbPutString(layer_text, str, strlen(str), 0, 0, COLOR_WHITE, FONT_6x8);
+    fbPutString(layer_text, str, strlen(str), TEXTCELL(0,0), COLOR_WHITE, FONT_6x8);
 
     myTimerTicks = 0;
     while(true){
@@ -42,7 +41,10 @@ void scorched_earth(){
     } else {
         strcpy(isMouse, "No mouse detected");
     }
-    fbPutString(layer_text, isMouse, strlen(isMouse), 0, 8, COLOR_WHITE, FONT_6x8);
+    //fbPutString(layer_text, isMouse, strlen(isMouse), TEXTCELL(0,1), COLOR_WHITE, FONT_6x8);
+
+    W_Button btn = W_Button(Point(40,160), 40, 20);
+    btn.redraw(layer_text);
 
     //Redraw screen
     //Painter's algorithm

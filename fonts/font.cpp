@@ -39,11 +39,20 @@ void fbPutGlyph(char *framebuffer, unsigned char *tile, int sizeX, int sizeY, in
 };
 
 //void putFontStringIntoFramebuffer(char *framebuffer, char *str, int len, int destX, int destY, int vga_color, unsigned char *font, int sizeX, int sizeY){
-void fbPutString(char *framebuffer, char *str, int len, int destX, int destY, int vga_color, Font font){
-    for(int i=0;i<len;i++){
-        int sizeX = font.getSizeX();
-        int sizeY = font.getSizeY();
-        
-        fbPutGlyph(framebuffer, font.getGlyph(str[i]), sizeX, sizeY, destX+(sizeX * i), destY, vga_color);
+void fbPutString(char *framebuffer, char *str, int len, Point destination, int vga_color, Font font){
+    int sizeX = font.getSizeX();
+    int sizeY = font.getSizeY();
+
+    for(int i=0;i<len;i++){        
+        fbPutGlyph(framebuffer, font.getGlyph(str[i]), sizeX, sizeY, destination.getX()+(sizeX * i), destination.getY(), vga_color);
+    }
+}
+
+void fbPutString(char *framebuffer, std::string str, Point destination, int color, Font font){
+    int sizeX = font.getSizeX();
+    int sizeY = font.getSizeY();
+
+    for(int i=0; i<str.length(); i++){
+        fbPutGlyph(framebuffer, font.getGlyph(str[i]), sizeX, sizeY, destination.getX()+(sizeX * i), destination.getY(), color);
     }
 }

@@ -10,6 +10,13 @@
 #include <fcntl.h>
 #include <io.h>
 
+#include "globals.hpp"
+#include "defines.hpp"
+#include "video.hpp"
+#include "mouse.hpp"
+#include "fonts\font.hpp"
+#include "widgets\button.hpp"
+
 void scorched_earth();
 void draw_ground(char *framebuffer);
 void read_shape(char *buffer, int shapeNum);

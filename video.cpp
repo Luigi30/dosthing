@@ -12,7 +12,7 @@ void init_framebuffer(char *framebuffer, UInt32 size){
     memset(framebuffer, 0, size);
 }
 
-void overlay_framebuffers(char *destination, char *source, UInt32 size){
+void overlay_framebuffers(char *destination, char *source, int size){
     //Copy one framebuffer on top of another.
     //Any pixels in the source of color 0x00 will be considered transparent.
     

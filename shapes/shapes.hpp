@@ -1,3 +1,6 @@
+#ifndef SHAPES_HPP
+#define SHAPES_HPP
+
 #include "point.hpp"
 
 class Shape {
@@ -10,3 +13,5 @@ class Shape {
     Shape(char *_name, char *_rawPointText);
     int getNumPoints() { return numPoints; }
 };
+
+#endif
