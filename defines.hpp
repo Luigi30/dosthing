@@ -1,6 +1,13 @@
 #ifndef GLOBALVARS_HPP
 #define GLOBALVARS_HPP
 
+#include <conio.h>
+#include <i86.h>
+
+#include "colors.hpp"
+
+double PI = 3.14159265;
+
 //VGA
 #define VGA_MEMORY 0xA000
 #define VGA_LINEAR_ADDRESS ((VGA_MEMORY) << 4)
@@ -35,5 +42,19 @@ volatile unsigned long myTimerTicks;
 volatile unsigned int timer60Hz;
 volatile unsigned int timer24Hz;
 
+//Button shape
+enum ButtonShape { BUTTON_SHAPE_RECT, BUTTON_SHAPE_ROUNDRECT };
+
+/******** Common Type Definitons ********/
+// unsigned types
+typedef unsigned char         Byte;
+typedef unsigned short        UInt16;
+typedef unsigned long         UInt32;
+typedef unsigned long long    UInt64;
+// signed types
+typedef signed char           SByte;
+typedef signed short          Int16;
+typedef signed long           Int32;
+typedef signed long long      Int64;
 #endif
 

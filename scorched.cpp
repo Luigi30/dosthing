@@ -1,8 +1,18 @@
 #include "scorched.hpp"
 
-char *layer_background;
-char *layer_text;
-char *layer_final;
+int keyInBuffer(){
+    union REGS regs;
+    regs.h.ah = 0x01;
+    int386(0x16, &regs, &regs);
+
+    if(regs.h.al){
+        regs.h.ah = 0x00;
+        int386(0x16, &regs, &regs);
+        return regs.h.al;
+    }
+
+    return 0x00;
+}
 
 void scorched_earth(){
 
@@ -10,20 +20,16 @@ void scorched_earth(){
     //Shape shape = Shape("TESTSHP", rawShapes[0]);
     
     //reset the framebuffers
-    layer_background    = (char*)malloc(VGA_SIZE);
-    layer_text          = (char*)malloc(VGA_SIZE);
-    layer_final         = (char*)malloc(VGA_SIZE);
+    layer_background    = Framebuffer();
+    layer_text          = Framebuffer();
+    layer_final         = Framebuffer();
+    layer_trigger       = Framebuffer();
     
-    memset(layer_background, 0, VGA_SIZE);
-    memset(layer_text, 0, VGA_SIZE);
-    memset(layer_final, 0, VGA_SIZE);
+    layer_background.draw_polygon(shapesList[0].points, shapesList[0].getNumPoints(), Point(100, 100), 0, COLOR_GREEN);
+    layer_background.draw_rectangle_filled(Point(0, 160), 320, 40, COLOR_LTGRAY);
 
-    draw_polygon(layer_background, shapesList[0].points, shapesList[0].getNumPoints(), Point(100, 100), 0, COLOR_GREEN);
-    draw_rectangle_filled(layer_background, Point(0, 160), 320, 40, COLOR_LTGRAY);
-    //draw_rectangle_filled(layer_background, Point(0, 0), 320, 200, COLOR_LTGRAY);
-
-    char str[32] = "Now we need buttons!";
-    fbPutString(layer_text, str, strlen(str), TEXTCELL(0,0), COLOR_WHITE, FONT_6x8);
+    //char str[32] = "Now we need buttons!";
+    //fbPutString(layer_text, str, strlen(str), TEXTCELL(0,0), COLOR_WHITE, FONT_6x8);
 
     myTimerTicks = 0;
     while(true){
@@ -33,6 +39,7 @@ void scorched_earth(){
     }
 
     //reset mouse
+    MouseData mouseData;
     int mouseAttached = isMouseAttached();
     char isMouse[32];
     if(mouseAttached){
@@ -41,41 +48,61 @@ void scorched_earth(){
     } else {
         strcpy(isMouse, "No mouse detected");
     }
-    //fbPutString(layer_text, isMouse, strlen(isMouse), TEXTCELL(0,1), COLOR_WHITE, FONT_6x8);
 
-    W_Button btn = W_Button(Point(40,160), 40, 20);
-    btn.redraw(layer_text);
+    //W_Button btn = W_Button(Point(40,160), BUTTON_SHAPE_RECT, 40, 20, "Test");
+    //btn.redraw(layer_text);
 
-    //Redraw screen
-    //Painter's algorithm
-    overlay_framebuffers(layer_final, layer_background, VGA_SIZE);
-    overlay_framebuffers(layer_final, layer_text, VGA_SIZE);
-    memcpy(VGA_PTR, layer_final, VGA_SIZE);
-    
-    getch();
+    redraw_screen();
 
-    /*
     while(true){
         while(!timer24Hz){
             //wait for 24Hz timer to fire
         }
-        layer_background[i % 64000] = 0x02;
-        i++;
+
+        mouseData = getMouseData();
+        if(mouseData.lmb_click){
+            //fbPutString(layer_text, "LMB down", strlen("LMB down"), TEXTCELL(0, 3), COLOR_WHITE, FONT_6x8);
+            layer_text.putString("LMB down", strlen("LMB down"), TEXTCELL(0, 3), COLOR_WHITE, FONT_6x8);
+        } else {
+            //fbPutString(layer_text, "LMB up  ", strlen("LMB up  "), TEXTCELL(0, 3), COLOR_WHITE, FONT_6x8);
+            layer_text.putString("LMB up  ", strlen("LMB up  "), TEXTCELL(0, 3), COLOR_WHITE, FONT_6x8);
+        }
+        int key = keyInBuffer();
+        if(key) {
+            char buf[32];
+            sprintf(buf, "You pressed %d", key);
+            //fbPutString(layer_text, buf, strlen(buf), TEXTCELL(0,2), COLOR_WHITE, FONT_6x8);
+            layer_text.putString(buf, strlen(buf), TEXTCELL(0,2), COLOR_WHITE, FONT_6x8);
+
+            if(key == 0x1B) {
+                exit_program("Returning to DOS...");
+            }
+
+        }
         
-        //Painter's algorithm
-        overlay_framebuffers(layer_final, layer_background, VGA_SIZE);
-        overlay_framebuffers(layer_final, layer_text, VGA_SIZE);
-        memcpy(VGA_PTR, layer_final, VGA_SIZE);
-        
-        timer60Hz = 0;
+        redraw_screen();
+        timer24Hz = 0;
     }
-    */
 }
 
-void draw_ground(char *framebuffer){
+void draw_ground(Framebuffer framebuffer){
     for(int j=150;j<VGA_HEIGHT;j++){
         for(int i=0;i<VGA_WIDTH;i++){
-            setPixel(framebuffer, i, j, COLOR_BROWN);
+            framebuffer.setPixel(i, j, COLOR_BROWN);
         }
     }
+}
+
+void redraw_screen(){
+    //Painter's algorithm
+    memset(layer_final.getPixels(), 0, VGA_SIZE);    
+    layer_final.overlay(layer_background, VGA_SIZE);
+    layer_final.overlay(layer_text, VGA_SIZE);
+    memcpy(VGA_PTR, layer_final.getPixels(), VGA_SIZE);
+}
+
+void exit_program(std::string msg) {
+    _setvideomode(_DEFAULTMODE);
+    printf(msg.c_str());
+    exit(0);
 }
