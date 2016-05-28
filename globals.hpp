@@ -26,4 +26,6 @@ Framebuffer layer_text;
 Framebuffer layer_final;
 
 Framebuffer layer_trigger;
+
+int needsRedraw = false;
 #endif

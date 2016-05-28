@@ -5,6 +5,8 @@
 #include "..\fonts\font.hpp"
 #include "..\shapes\shapes.hpp"
 
+class Framebuffer;
+
 class Widget {
     //An interactive control on the screen, i.e. button or something
 
@@ -14,8 +16,8 @@ class Widget {
 
     public:
     Point getPosition() { return position; };
-    //virtual void onClick();
-    //virtual void redraw(Framebuffer framebuffer);
+    virtual void onClick(){};
+    virtual void redraw(Framebuffer *framebuffer){};
 };
 
 #endif

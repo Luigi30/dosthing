@@ -1,5 +1,8 @@
 #include "scorched.hpp"
 
+//std::vector<W_Button> screenWidgets;
+W_Button screenWidgets[16];
+
 int keyInBuffer(){
     union REGS regs;
     regs.h.ah = 0x01;
@@ -28,8 +31,8 @@ void scorched_earth(){
     layer_background.draw_polygon(shapesList[0].points, shapesList[0].getNumPoints(), Point(100, 100), 0, COLOR_GREEN);
     layer_background.draw_rectangle_filled(Point(0, 160), 320, 40, COLOR_LTGRAY);
 
-    //char str[32] = "Now we need buttons!";
-    //fbPutString(layer_text, str, strlen(str), TEXTCELL(0,0), COLOR_WHITE, FONT_6x8);
+    char str[32] = "Now we need buttons!";
+    layer_text.putString(str, strlen(str), TEXTCELL(0, 0), COLOR_WHITE, FONT_6x8);
 
     myTimerTicks = 0;
     while(true){
@@ -49,11 +52,8 @@ void scorched_earth(){
         strcpy(isMouse, "No mouse detected");
     }
 
-    //W_Button btn = W_Button(Point(40,160), BUTTON_SHAPE_RECT, 40, 20, "Test");
-    //btn.redraw(layer_text);
-
-    redraw_screen();
-
+    screenWidgets[0] = W_Button(Point(40,160), BUTTON_SHAPE_RECT, 40, 20, "Test");
+    
     while(true){
         while(!timer24Hz){
             //wait for 24Hz timer to fire
@@ -70,8 +70,7 @@ void scorched_earth(){
         int key = keyInBuffer();
         if(key) {
             char buf[32];
-            sprintf(buf, "You pressed %d", key);
-            //fbPutString(layer_text, buf, strlen(buf), TEXTCELL(0,2), COLOR_WHITE, FONT_6x8);
+            sprintf(buf, "You pressed %d   ", key);
             layer_text.putString(buf, strlen(buf), TEXTCELL(0,2), COLOR_WHITE, FONT_6x8);
 
             if(key == 0x1B) {
@@ -79,8 +78,10 @@ void scorched_earth(){
             }
 
         }
-        
+
+        //if(needsRedraw){
         redraw_screen();
+        //}
         timer24Hz = 0;
     }
 }
@@ -94,11 +95,16 @@ void draw_ground(Framebuffer framebuffer){
 }
 
 void redraw_screen(){
-    //Painter's algorithm
+    //widgets go on the text layer
+    layer_text.draw_widget(screenWidgets[0]);
+    
+    //Painter's algorithm        
     memset(layer_final.getPixels(), 0, VGA_SIZE);    
     layer_final.overlay(layer_background, VGA_SIZE);
-    layer_final.overlay(layer_text, VGA_SIZE);
+    layer_final.overlay(layer_text, VGA_SIZE);    
     memcpy(VGA_PTR, layer_final.getPixels(), VGA_SIZE);
+
+    needsRedraw = false;
 }
 
 void exit_program(std::string msg) {
