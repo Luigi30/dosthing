@@ -106,10 +106,6 @@ void Framebuffer::overlay(Framebuffer source, int size){
     }
 }
 
-void Framebuffer::draw_widget(W_Button _widget){
-    _widget.redraw(this);
-}
-
 double getSlope(Point start, Point end){
     //m = (startY - endY) / (startX - endX)
     return (double)(start.getY() - end.getY()) / (start.getX() - end.getX());

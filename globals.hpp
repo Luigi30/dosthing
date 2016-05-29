@@ -11,7 +11,9 @@
 #include <vector>
 #include <string>
 
+#include "pcx.hpp"
 #include "framebuffer.hpp"
+#include "screen.hpp"
 #include "fonts\font.hpp"
 #include "shapes\shapes.hpp"
 #include "widgets\widget.hpp"
@@ -21,11 +23,12 @@ char messages[64][4];
 std::vector<Shape> shapesList;
 Widget activeWidgets[32];
 
-Framebuffer layer_background;
-Framebuffer layer_text;
-Framebuffer layer_final;
+Screen g_screen;
 
-Framebuffer layer_trigger;
+//Framebuffer layer_background;
+//Framebuffer layer_text;
+//Framebuffer layer_final;
+//Framebuffer layer_trigger;
 
 int needsRedraw = false;
 #endif

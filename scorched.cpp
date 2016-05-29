@@ -21,6 +21,8 @@ void scorched_earth(){
 
     //Convert the first entry of SHAPES.DAT into a list of Points.
     //Shape shape = Shape("TESTSHP", rawShapes[0]);
+
+    PCX pcx = PCX("DAMFERBO.PCX");
     
     //reset the framebuffers
     layer_background    = Framebuffer();
@@ -32,7 +34,7 @@ void scorched_earth(){
     layer_background.draw_rectangle_filled(Point(0, 160), 320, 40, COLOR_LTGRAY);
 
     char str[32] = "Now we need buttons!";
-    layer_text.putString(str, strlen(str), TEXTCELL(0, 0), COLOR_WHITE, FONT_6x8);
+    //layer_text.putString(str, strlen(str), TEXTCELL(0, 0), COLOR_WHITE, FONT_6x8);
 
     myTimerTicks = 0;
     while(true){
@@ -40,7 +42,6 @@ void scorched_earth(){
             break;
         }
     }
-
     //reset mouse
     MouseData mouseData;
     int mouseAttached = isMouseAttached();
@@ -52,13 +53,15 @@ void scorched_earth(){
         strcpy(isMouse, "No mouse detected");
     }
 
-    screenWidgets[0] = W_Button(Point(40,160), BUTTON_SHAPE_RECT, 40, 20, "Test");
+    std::string testStr = "Test";
+    screenWidgets[0] = W_Button(Point(240,160), BUTTON_SHAPE_RECT, 40, 20, testStr);
     
     while(true){
         while(!timer24Hz){
             //wait for 24Hz timer to fire
         }
 
+                /*
         mouseData = getMouseData();
         if(mouseData.lmb_click){
             //fbPutString(layer_text, "LMB down", strlen("LMB down"), TEXTCELL(0, 3), COLOR_WHITE, FONT_6x8);
@@ -67,11 +70,12 @@ void scorched_earth(){
             //fbPutString(layer_text, "LMB up  ", strlen("LMB up  "), TEXTCELL(0, 3), COLOR_WHITE, FONT_6x8);
             layer_text.putString("LMB up  ", strlen("LMB up  "), TEXTCELL(0, 3), COLOR_WHITE, FONT_6x8);
         }
+                */
         int key = keyInBuffer();
         if(key) {
             char buf[32];
             sprintf(buf, "You pressed %d   ", key);
-            layer_text.putString(buf, strlen(buf), TEXTCELL(0,2), COLOR_WHITE, FONT_6x8);
+            //layer_text.putString(buf, strlen(buf), TEXTCELL(0,2), COLOR_WHITE, FONT_6x8);
 
             if(key == 0x1B) {
                 exit_program("Returning to DOS...");
@@ -112,3 +116,15 @@ void exit_program(std::string msg) {
     printf(msg.c_str());
     exit(0);
 }
+
+    /*    
+    unsigned char* pcxPixels = pcx.getPixelData();
+    int pcxSizeX = pcx.getHeader().HScrSize + 1;//DAMFERBO needs + 1? why?
+    int pcxSizeY = pcx.getHeader().VScrSize;
+
+    for(int y = 0; y < 200; y++){
+        for(int x = 0; x < pcxSizeX; x++){
+            layer_background.setPixel(x, y, pcxPixels[x + (y * pcxSizeX)]);
+        }
+    }
+    */

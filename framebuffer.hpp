@@ -6,8 +6,6 @@
 #include "defines.hpp"
 #include "fonts\font.hpp"
 #include "shapes\shapes.hpp"
-#include "widgets\widget.hpp"
-#include "widgets\button.hpp"
 
 class Framebuffer {
     unsigned char *pixels;
@@ -21,8 +19,6 @@ class Framebuffer {
     void setPixel(int, int, int);
     void overlay(Framebuffer source, int size);
     unsigned char *getPixels();
-
-    void draw_widget(W_Button _widget);
 
     void putString(const char *str, int len, Point destination, int vga_color, Font font);
     void putString(std::string str, Point destination, int color, Font font);

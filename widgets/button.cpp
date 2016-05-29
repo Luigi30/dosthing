@@ -5,6 +5,7 @@ W_Button::W_Button(){};
 
 W_Button::W_Button(Point _pos, ButtonShape _shape, int _sizeX, int _sizeY, std::string _text){
     position = Point(_pos.getX(), _pos.getY());
+    shape = _shape;
     sizeX = _sizeX;
     sizeY = _sizeY;
     text = _text;
@@ -12,8 +13,9 @@ W_Button::W_Button(Point _pos, ButtonShape _shape, int _sizeX, int _sizeY, std::
 
 void W_Button::redraw(Framebuffer *framebuffer){
     //Draw a rectangle at position.
+    framebuffer->putString("Drawing button!", strlen("Drawing button!"), Point(0, 8), COLOR_WHITE, FONT_4x6);
 
-    if(shape == BUTTON_SHAPE_RECT) {
+    //if(shape == BUTTON_SHAPE_RECT) {
         framebuffer->draw_rectangle_filled(position, sizeX, sizeY, COLOR_LTGRAY);
         
         //shading: brighter in the upper and left sides
@@ -31,7 +33,7 @@ void W_Button::redraw(Framebuffer *framebuffer){
         framebuffer->draw_line(Point(position.getX(), position.getY()+sizeY),
                 Point(position.getX()+sizeX, position.getY()+sizeY),
                 COLOR_DKGRAY);
-    }
+    //}
 
     //now draw the text
     framebuffer->putString(text.c_str(), text.length(), Point(position.getX(), position.getY() + ((sizeY - 6)/2)), COLOR_GRAYS+0, FONT_4x6);

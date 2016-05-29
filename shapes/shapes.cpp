@@ -24,8 +24,8 @@ Shape::Shape(char *_name, char *_rawPointText){
     token = strtok(_rawPointText, "|");
 
     while(token != NULL) {
-        printf("%s : ", token);
-        points[assignedPoints] = Point(token);
+        //printf("%s : ", token);
+        //points[assignedPoints] = Point(token);
         assignedPoints++;
         token = strtok(NULL, "|");
     }

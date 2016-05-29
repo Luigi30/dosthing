@@ -1,3 +1,6 @@
+#ifndef BLACKJACK_HPP
+#define BLACKJACK_HPP
+
 #include <stdio.h>
 #include <conio.h>
 #include <string.h>
@@ -9,4 +12,11 @@
 
 #include "globals.hpp"
 #include "defines.hpp"
-#include "blackjack.hpp"
+#include "framebuffer.hpp"
+#include "mouse.hpp"
+#include "fonts\font.hpp"
+#include "widgets\button.hpp"
+
+void blackjack();
+
+#endif

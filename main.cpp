@@ -92,8 +92,39 @@ void load_strings(){
     }
 }
 
-int main () {
+void load_palette(char *filename){
+        FILE *hPaletteData = fopen(filename, "r");
+        
+        char paletteBuf[260][16];
+        unsigned char red, green, blue;
+        
+        if(hPaletteData != NULL){
+                int i = 0;
+                while(fgets(paletteBuf[i], 255, hPaletteData) != NULL) {
+                        i++;
+                }
+                for(int i=3+16;i<259;i++){
+                        //printf(paletteBuf[i]);
+                        
+                        char *token;
+                        token = strtok(paletteBuf[i], " ");
+                        red = atoi(token);
+                        token = strtok(NULL, " ");
+                        green = atoi(token);
+                        token = strtok(NULL, " ");
+                        blue = atoi(token);
+                        
+                        //printf("(%d, %d, %d)", red, green, blue);
+                        //printf("\n");
+                        outp(0x03c8, i-3);
+                        outp(0x03c9, red>>2);
+                        outp(0x03c9, green>>2);
+                        outp(0x03c9, blue>>2);
+                }
+        }
+}
 
+int main () {
     DEBUG("Serial connected\r\n");
        
     sleep(1);
@@ -103,13 +134,13 @@ int main () {
 
     load_strings();
     load_shapes();
-    
+        
     _setvideomode(_MRES256COLOR); //Change to mode 13h
+    //load_palette("STTNG.PAL");
     _setcolor(COLOR_WHITE);
-
-    scorched_earth();
+    blackjack();
 
     //Back to normal
-    _setvideomode(_DEFAULTMODE);
+    //_setvideomode(_DEFAULTMODE);
     exit(0);
 }
