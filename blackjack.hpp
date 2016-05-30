@@ -17,6 +17,8 @@
 #include "fonts\font.hpp"
 #include "widgets\button.hpp"
 
+#include "bjack\deck.hpp"
+
 void blackjack();
 
 #endif

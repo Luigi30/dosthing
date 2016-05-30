@@ -4,6 +4,7 @@
 #include <vector>
 #include <stdlib>
 #include "framebuffer.hpp"
+#include "widgets\widget.hpp"
 
 struct Button {
     Point position;
@@ -28,6 +29,9 @@ class Screen {
     Framebuffer layer_background;
     Framebuffer layer_text;
     Framebuffer layer_final;
+
+    std::vector<Widget*> widgetsList;
+    std::string getClickedWidget(Point);
 
     void addButton(Button);
     void drawButton(Button);

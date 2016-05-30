@@ -3,7 +3,8 @@
 
 W_Button::W_Button(){};
 
-W_Button::W_Button(Point _pos, ButtonShape _shape, int _sizeX, int _sizeY, std::string _text){
+W_Button::W_Button(std::string _name, Point _pos, ButtonShape _shape, int _sizeX, int _sizeY, std::string _text){
+    name = _name;
     position = Point(_pos.getX(), _pos.getY());
     shape = _shape;
     sizeX = _sizeX;
@@ -11,39 +12,51 @@ W_Button::W_Button(Point _pos, ButtonShape _shape, int _sizeX, int _sizeY, std::
     text = _text;
 };
 
-void W_Button::redraw(Framebuffer *framebuffer){
+std::string W_Button::getName(){
+    return name;
+}
+
+void W_Button::redraw(Framebuffer *layer_background, Framebuffer *layer_text){
     //Draw a rectangle at position.
-    framebuffer->putString("Drawing button!", strlen("Drawing button!"), Point(0, 8), COLOR_WHITE, FONT_4x6);
+    layer_text->putString("Drawing button!", strlen("Drawing button!"), Point(0, 8), COLOR_WHITE, FONT_4x6);
 
     //if(shape == BUTTON_SHAPE_RECT) {
-        framebuffer->draw_rectangle_filled(position, sizeX, sizeY, COLOR_LTGRAY);
+        layer_background->draw_rectangle_filled(position, sizeX, sizeY, COLOR_LTGRAY);
         
         //shading: brighter in the upper and left sides
-        framebuffer->draw_line(position,
+        layer_background->draw_line(position,
                 Point(position.getX()+sizeX, position.getY()),
                 COLOR_WHITE);
-        framebuffer->draw_line(position,
+        layer_background->draw_line(position,
                 Point(position.getX(), position.getY()+sizeY),
                 COLOR_WHITE);
 
         //darker in the right and bottom sides
-        framebuffer->draw_line(Point(position.getX()+sizeX, position.getY()),
+        layer_background->draw_line(Point(position.getX()+sizeX, position.getY()),
                 Point(position.getX()+sizeX, position.getY()+sizeY),
                 COLOR_DKGRAY);
-        framebuffer->draw_line(Point(position.getX(), position.getY()+sizeY),
+        layer_background->draw_line(Point(position.getX(), position.getY()+sizeY),
                 Point(position.getX()+sizeX, position.getY()+sizeY),
                 COLOR_DKGRAY);
     //}
 
     //now draw the text
-    framebuffer->putString(text.c_str(), text.length(), Point(position.getX(), position.getY() + ((sizeY - 6)/2)), COLOR_GRAYS+0, FONT_4x6);
+    layer_text->putString(text.c_str(), text.length(), Point(position.getX(), position.getY() + ((sizeY - 6)/2)), COLOR_BLUE, FONT_4x6);
 }
-/*
-void W_Button::setup_trigger(char *framebuffer, int id){
-    //ID is the trigger from the list
-    draw_rectangle_filled(framebuffer, position, sizeX, sizeY, id);
+
+int W_Button::pointIsInside(Point _point){
+    int minX = position.getX() * 2;
+    int maxX = minX + sizeX * 2;
+
+    int minY = position.getY();
+    int maxY = minY + sizeY;
+
+    if(_point.getX() >= minX && _point.getX() <= maxX && _point.getY() >= minY && _point.getY() <= maxY){
+        return true;
+    } else {
+        return false;
+    }
 }
-*/
 
 void W_Button::onClick() {
     //do nothing;

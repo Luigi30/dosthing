@@ -9,10 +9,11 @@ class W_Button : public Widget {
     
     public:
     W_Button();
-    W_Button(Point, ButtonShape, int, int, std::string);
+    W_Button(std::string, Point, ButtonShape, int, int, std::string);
     void onClick();
-    void redraw(Framebuffer *framebuffer);
-    //void setup_trigger(char *framebuffer, int id);
+    virtual void redraw(Framebuffer *background, Framebuffer *text);
+    virtual int pointIsInside(Point _point);
+    virtual std::string getName();
 };
 
 #endif

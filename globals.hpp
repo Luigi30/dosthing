@@ -21,7 +21,6 @@
 //Global data
 char messages[64][4];
 std::vector<Shape> shapesList;
-Widget activeWidgets[32];
 
 Screen g_screen;
 

@@ -100,7 +100,7 @@ void Framebuffer::overlay(Framebuffer source, int size){
     //Any pixels in the source of color 0x00 will be considered transparent.
     
     for(UInt32 i=0;i<size;i++){
-        if(source.getPixels()[i] != 0x00){
+        if(source.getPixels()[i] > 0x00){
             pixels[i] = source.getPixels()[i];
         }
     }

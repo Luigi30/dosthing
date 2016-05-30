@@ -13,11 +13,14 @@ class Widget {
     protected:
     Point position;
     int sizeX, sizeY, color;
+    std::string name;
 
     public:
+    virtual std::string getName();
     Point getPosition() { return position; };
     virtual void onClick(){};
-    virtual void redraw(Framebuffer *framebuffer){};
+    virtual void redraw(Framebuffer *background, Framebuffer *text){};
+    virtual int pointIsInside(Point);
 };
 
 #endif

@@ -1,9 +1,9 @@
 #include "screen.hpp"
 
 void Screen::redraw(){
-    //render buttons to layer_backgrond
-    for(int i=0; i<buttons.size(); i++){
-        drawButton(buttons[i]);
+    //render buttons to layer_background and text to layer_text
+    for(int i=0;i<widgetsList.size();i++){
+        widgetsList[i]->redraw(&layer_background, &layer_text);
     }
     
     memset(layer_final.getPixels(), 0, VGA_SIZE);    
@@ -47,4 +47,14 @@ void Screen::drawButton(Button _button){
 
     //now draw the text
     layer_text.putString(_button.text.c_str(), _button.text.length(), Point(_button.position.getX(), _button.position.getY() + ((_button.sizeY - 6)/2)), 0x10, FONT_4x6);
+}
+
+std::string Screen::getClickedWidget(Point _point){
+    //which widget did we click? -1 if none, widget ID otherwise
+    for(int i=0;i<widgetsList.size();i++){
+        if(widgetsList[i]->pointIsInside(_point)){
+            return widgetsList[i]->getName();
+        }
+    }
+    return NULL;
 }
