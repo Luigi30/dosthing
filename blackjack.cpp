@@ -3,6 +3,7 @@
 W_Button buttons[16];
 int widgetCount = 0;
 int lmbDown = false;
+std::string clickingOnWidgetName;
 
 Deck deck;
 
@@ -28,10 +29,20 @@ void exit_program(std::string msg) {
 
 void dealHand(){
     g_screen.layer_text.putString("Deal!", strlen("Deal!"), TEXTCELL(0, 3), COLOR_WHITE, FONT_6x8);
-    Card card = deck.getRandomCard();
+    Card card1 = deck.getRandomCard();  
     char strCard[32];
-    sprintf(strCard, "Drew %c%c", card.getRank(), card.getSuit());
+    sprintf(strCard, "Drew %c%c", card1.getRank(), card1.getSuit());
     g_screen.layer_text.putString(strCard, strlen(strCard), TEXTCELL(0, 4), COLOR_WHITE, FONT_6x8);
+
+    Card card2 = deck.getRandomCard();  
+    sprintf(strCard, "Drew %c%c", card2.getRank(), card2.getSuit());
+    g_screen.layer_text.putString(strCard, strlen(strCard), TEXTCELL(0, 5), COLOR_WHITE, FONT_6x8);
+
+    g_screen.widgetsList.pop_back();
+    g_screen.widgetsList.pop_back();
+    
+    g_screen.widgetsList.push_back(new W_Card_Graphic("card1", Point(40, 40), card1.getRank(), card1.getSuit()));
+    g_screen.widgetsList.push_back(new W_Card_Graphic("card2", Point(100, 40), card2.getRank(), card2.getSuit()));
 }
 
 void blackjack(){
@@ -44,8 +55,11 @@ void blackjack(){
     char str[32] = "Now we need buttons!";
     g_screen.layer_text.putString(str, strlen(str), TEXTCELL(0, 0), COLOR_WHITE, FONT_6x8);
 
-    g_screen.widgetsList.push_back(new W_Button("buttonDeal", Point(20, 160), BUTTON_SHAPE_RECT, 40, 20, "Deal"));
-    g_screen.widgetsList.push_back(new W_Button("buttonExit", Point(260, 160), BUTTON_SHAPE_RECT, 40, 20, "Exit"));
+    g_screen.widgetsList.push_back(new W_Button("buttonDeal", Point(20, 160), BUTTON_SHAPE_RECT, Size2D(40, 20), "Deal"));
+    g_screen.widgetsList.push_back(new W_Button("buttonExit", Point(260, 160), BUTTON_SHAPE_RECT, Size2D(40, 20), "Exit"));
+
+    g_screen.widgetsList.push_back(new W_Card_Graphic("card1", Point(40, 40), 'A', 's'));
+    g_screen.widgetsList.push_back(new W_Card_Graphic("card2", Point(100, 40), 'A', 's'));
 
     cursorEnable();
 
@@ -59,17 +73,22 @@ void blackjack(){
         MouseData mouseData = getMouseData();
 
         if(!lmbDown && mouseData.lmb_click){
+            
+            //clicking the mouse on a widget
             lmbDown = true;
             char clicked[32];
-            std::string clickedWidgetName = g_screen.getClickedWidget(Point(mouseData.x, mouseData.y));
-
-                 if(clickedWidgetName == "buttonExit") exit_program("Returning to DOS...");
-            else if(clickedWidgetName == "buttonDeal") dealHand();
-
-            g_screen.redraw();
+            clickingOnWidgetName = g_screen.getClickedWidget(Point(mouseData.x, mouseData.y));
+            
         }
-
-        if(lmbDown && !mouseData.lmb_click) lmbDown = 0;
+        else if(lmbDown && !mouseData.lmb_click && clickingOnWidgetName == g_screen.getClickedWidget(Point(mouseData.x, mouseData.y))) {
+            
+            //released the mouse on the same widget so process our click
+            if(clickingOnWidgetName == "buttonExit") exit_program("Returning to DOS...");
+            else if(clickingOnWidgetName == "buttonDeal") dealHand();
+            lmbDown = 0;
+            g_screen.redraw();
+            
+        }
 
         /*
         int key = keyInBuffer();

@@ -25,6 +25,7 @@ class Framebuffer {
     void putGlyph(unsigned char *tile, int sizeX, int sizeY, int destX, int destY, int vga_color);
 
     Framebuffer();
+    ~Framebuffer();
 };
 
 //drawing routines

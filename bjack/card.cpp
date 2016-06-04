@@ -26,6 +26,23 @@
         else return '?';
     }
 
+    static int Card::rankCharToInt(char rank){
+        switch (rank) {
+        case 'A':
+            return 1;
+        case 'T':
+            return 10;
+        case 'J':
+            return 11;
+        case 'Q':
+            return 12;
+        case 'K':
+            return 13;
+        default:
+            return rank - 0x30;
+        }
+    }
+
     Card::Card(int _id){
         id = _id;
     }

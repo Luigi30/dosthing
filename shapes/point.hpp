@@ -20,7 +20,13 @@ class Point {
         Point(char*);
         int getX() { return x; };
         int getY() { return y; };
+        Point operator+(const Point& two){
+            Point point = Point(this->x + two.x, this->y + two.y);
+            return point;
+        }
 };
+
+typedef Point Size2D;
 
 #endif
 

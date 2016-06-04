@@ -8,6 +8,8 @@ class Card {
     char getRank();
     char getSuit();
 
+    static int rankCharToInt(char rank);
+
     Card();
     Card(int);
 };

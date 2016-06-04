@@ -12,7 +12,8 @@ class Widget {
 
     protected:
     Point position;
-    int sizeX, sizeY, color;
+    Size2D size;
+    int color;
     std::string name;
 
     public:

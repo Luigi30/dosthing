@@ -14,7 +14,7 @@ PCX::PCX(char *filename){
 
     if(pcxFile != NULL){
         fread(buffer, sizeof(buffer), 1, pcxFile);
-        printf("Read file into buffer...\n");
+        //printf("Read file into buffer...\n");
 
         readHeader(buffer);
 
@@ -22,21 +22,26 @@ PCX::PCX(char *filename){
             printf("%s isn't a PCX file: Invalid header!", filename);
         }
 
-        printf("OK, PCX file has %d bytes per line\n", header.bytesPerLine);
+        //printf("OK, PCX file has %d bytes per line\n", header.bytesPerLine);
 
         //Now read the remaining length minus 768 bytes (the palette) in
         data = (unsigned char*)malloc(header.bytesPerLine * getSizeY());
         fread(data, header.bytesPerLine, getSizeY(), pcxFile);
-		
-		pixelData = NULL;
+        pixelData = NULL;
+        
     } else {
         printf("%s isn't a readable file!", filename);
         exit(255);
     }
 }
 
+PCX::~PCX(){
+    free(data);
+    free(pixelData);
+}
+
 int PCX::validateHeader(){
-    printf("Attempting to validate header...\n");
+    //printf("Attempting to validate header...\n");
     
     if(header.manufacturer != 0x0A) return 0;
     if(header.encoding != 0x01) return 0;
@@ -81,56 +86,57 @@ void PCX::readHeader(unsigned char *buffer){
         header.HScrSize = getSizeX() + 1;
         header.VScrSize = getSizeY() + 1;
 
-        printf("Read header...\n");
+        //printf("Read header...\n");
 }
 
 unsigned char* PCX::getPixelData(){
-	printf("getPixelData()\n");
-	
+        //printf("getPixelData()\n");
+        
     if(pixelData == NULL){
-		printf("Generating pixel data\n");
+        //printf("Generating pixel data\n");
         pixelData = (unsigned char*)malloc(header.bytesPerLine * header.VScrSize);
         std::memset(pixelData, 0, header.bytesPerLine * header.VScrSize);
+        //printf("%d", header.bytesPerLine);
 
         int remainingLength = 0;
         int currentColor = 0;
         int pixelLocation = 0;
-		long encodedOffset = 0;
+        long encodedOffset = 0;
 
-		//how many bytes total is the image?
+        //how many bytes total is the image?
         long totalSize = header.HScrSize * header.VScrSize;
-		
-		//printf("%d, %d dimensions", header.HScrSize, header.VScrSize);
+                
+                //printf("%d, %d dimensions", header.HScrSize, header.VScrSize);
 
-		for(int pixelLocation=0;pixelLocation<totalSize;pixelLocation++){	
-			if(remainingLength == 0){
-				//printf("Reading offset %d\n", encodedOffset);
-				//is the next byte length or color?
-				if(data[encodedOffset] >= 192) {
-					//length
-					remainingLength = (data[encodedOffset] & ~(0xC0)); //set two high bits to 0, that's the length
-					encodedOffset++;
-					currentColor = data[encodedOffset]; //and the next byte is color
-					
-					//printf("(%x %x) = Found length %d, color %d\n", data[encodedOffset-1], data[encodedOffset], remainingLength, currentColor);
-				} else {
-					//color
-					currentColor = data[encodedOffset];
-					remainingLength = 1; //length 1
-					//printf("(%x) = Found length 1, color %d\n", data[encodedOffset], currentColor);
-				}
-				
-				encodedOffset++;
-			}
-			
-			//process the current pixel
-			pixelData[pixelLocation] = currentColor;
-			remainingLength--;
-		}
+                for(int pixelLocation=0;pixelLocation<totalSize;pixelLocation++){       
+                        if(remainingLength == 0){
+                                //printf("Reading offset %d\n", encodedOffset);
+                                //is the next byte length or color?
+                                if(data[encodedOffset] >= 192) {
+                                        //length
+                                        remainingLength = (data[encodedOffset] & ~(0xC0)); //set two high bits to 0, that's the length
+                                        encodedOffset++;
+                                        currentColor = data[encodedOffset]; //and the next byte is color
+                                        
+                                        //printf("(%x %x) = Found length %d, color %d\n", data[encodedOffset-1], data[encodedOffset], remainingLength, currentColor);
+                                } else {
+                                        //color
+                                        currentColor = data[encodedOffset];
+                                        remainingLength = 1; //length 1
+                                        //printf("(%x) = Found length 1, color %d\n", data[encodedOffset], currentColor);
+                                }
+                                
+                                encodedOffset++;
+                        }
+                        
+                        //process the current pixel
+                        pixelData[pixelLocation] = currentColor;
+                        remainingLength--;
+                }
 
     } else {
-		printf("Retrieving pixel data without generation\n");
-	}
+                //printf("Retrieving pixel data without generation\n");
+        }
 
     return pixelData;
 }

@@ -16,6 +16,7 @@
 #include "mouse.hpp"
 #include "fonts\font.hpp"
 #include "widgets\button.hpp"
+#include "widgets\cardgfx.hpp"
 
 #include "bjack\deck.hpp"
 

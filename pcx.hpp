@@ -33,6 +33,7 @@ class PCX {
 
     public:
     PCX(char *filename);
+    ~PCX();
     PCXHeader getHeader();
     unsigned char* getPixelData();
 
