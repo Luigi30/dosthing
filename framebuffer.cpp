@@ -5,10 +5,6 @@ Framebuffer::Framebuffer(){
     memset(pixels, 0, VGA_SIZE);
 }
 
-Framebuffer::~Framebuffer(){
-    free(pixels);
-}
-
 unsigned char *Framebuffer::getPixels(){
     return pixels;
 }

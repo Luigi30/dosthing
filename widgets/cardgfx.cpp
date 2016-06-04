@@ -1,6 +1,5 @@
 #include "cardgfx.hpp"
 #include "..\framebuffer.hpp"
-#include "..\pcx.hpp"
 #include "..\bjack\card.hpp"
 
 W_Card_Graphic::W_Card_Graphic(std::string _name, Point _position, char _rank, char _suit){
@@ -63,8 +62,7 @@ void W_Card_Graphic::drawRankAndSuitIcons(Framebuffer *layer, char rank, char su
 
 void W_Card_Graphic::redraw(Framebuffer *background, Framebuffer *text){
 
-    PCX blankGraphic = PCX("C_BLANK.PCX");
-    unsigned char *cardPixels = blankGraphic.getPixelData();
+    unsigned char *cardPixels = blankCard.getPixelData();
     int i=0;
 
     for(int y=0; y<size.getY(); y++){
@@ -78,7 +76,7 @@ void W_Card_Graphic::redraw(Framebuffer *background, Framebuffer *text){
     drawRankAndSuitIcons(background, rank, suit);
 
     char str[32];
-    sprintf(str, "PCX is %dx%d", blankGraphic.getHeader().HScrSize, blankGraphic.getHeader().VScrSize);
+    sprintf(str, "PCX is %dx%d", blankCard.getHeader().HScrSize, blankCard.getHeader().VScrSize);
     text->putString(str, strlen(str), TEXTCELL(0, 3), COLOR_WHITE, FONT_6x8);
     
 }

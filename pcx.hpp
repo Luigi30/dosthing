@@ -1,3 +1,6 @@
+#ifndef PCX_HPP
+#define PCX_HPP
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <cstring>
@@ -40,3 +43,5 @@ class PCX {
     int getSizeX();
     int getSizeY();
 };
+
+#endif

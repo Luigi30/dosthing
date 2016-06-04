@@ -1,6 +1,7 @@
 #ifndef CARDGFX_HPP
 #define CARDGFX_HPP
 
+#include "..\pcx.hpp"
 #include "widget.hpp"
 
 const char RANK_ICON_ACE[] = { 15,00,00,00,15,
@@ -110,6 +111,9 @@ const char* rankIconPointers[] = { RANK_ICON_ACE, RANK_ICON_TWO, RANK_ICON_THREE
 const Size2D ICON_SIZE = Size2D(5, 5);
 const Point RANK_POSITION = Point(2, 6);
 const Point SUIT_POSITION = Point(2, 12);
+
+//graphics
+PCX blankCard = PCX("C_BLANK.PCX");
 
 class W_Card_Graphic : public Widget {
     char rank;

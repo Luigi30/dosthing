@@ -94,8 +94,9 @@ unsigned char* PCX::getPixelData(){
         
     if(pixelData == NULL){
         //printf("Generating pixel data\n");
-        pixelData = (unsigned char*)malloc(header.bytesPerLine * header.VScrSize);
-        std::memset(pixelData, 0, header.bytesPerLine * header.VScrSize);
+        //pixelData = (unsigned char*)malloc(header.bytesPerLine * header.VScrSize);
+        pixelData = (unsigned char*)malloc(header.HScrSize * header.VScrSize);
+        std::memset(pixelData, 0, header.HScrSize * header.VScrSize);
         //printf("%d", header.bytesPerLine);
 
         int remainingLength = 0;
