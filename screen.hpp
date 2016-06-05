@@ -31,7 +31,7 @@ class Screen {
     Framebuffer layer_final;
 
     std::vector<Widget*> widgetsList;
-    std::string getClickedWidget(Point);
+    Widget* getClickedWidget(Point);
 
     void addButton(Button);
     void drawButton(Button);

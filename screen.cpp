@@ -49,11 +49,11 @@ void Screen::drawButton(Button _button){
     layer_text.putString(_button.text.c_str(), _button.text.length(), Point(_button.position.getX(), _button.position.getY() + ((_button.sizeY - 6)/2)), 0x10, FONT_4x6);
 }
 
-std::string Screen::getClickedWidget(Point _point){
+Widget* Screen::getClickedWidget(Point _point){
     //which widget did we click? -1 if none, widget ID otherwise
     for(int i=0;i<widgetsList.size();i++){
         if(widgetsList[i]->pointIsInside(_point)){
-            return widgetsList[i]->getName();
+            return widgetsList[i];
         }
     }
     return NULL;

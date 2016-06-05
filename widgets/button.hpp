@@ -13,6 +13,7 @@ class W_Button : public Widget {
     void onClick();
     virtual void redraw(Framebuffer *background, Framebuffer *text);
     virtual int pointIsInside(Point _point);
+    bool isDown;
 };
 
 #endif

@@ -3,9 +3,9 @@
 #include "..\bjack\card.hpp"
 
 W_Card_Graphic::W_Card_Graphic(std::string _name, Point _position, char _rank, char _suit){
-    //size is fixed at 50x70
+    //size is fixed at 50x60
     name = _name;
-    size = Size2D(50, 70);
+    size = Size2D(50, 60);
     position = _position;
     rank = _rank;
     suit = _suit;
@@ -28,8 +28,8 @@ int W_Card_Graphic::pointIsInside(Point _point){
 void W_Card_Graphic::drawIcon(Framebuffer *layer, const char *icon, Point _pos, Size2D _size){
 
     int i=0;
-    int sizeX = _size.getX();
-    int sizeY = _size.getY();
+    int sizeX = _size.getX() * ICON_SCALE_FACTOR;
+    int sizeY = _size.getY() * ICON_SCALE_FACTOR;
     Point localPosition = position + _pos;
     
     for(int y=0; y<sizeY; y++){
@@ -62,21 +62,20 @@ void W_Card_Graphic::drawRankAndSuitIcons(Framebuffer *layer, char rank, char su
 
 void W_Card_Graphic::redraw(Framebuffer *background, Framebuffer *text){
 
-    unsigned char *cardPixels = blankCard.getPixelData();
-    int i=0;
+    int sizeX = size.getX();
+    int sizeY = size.getY();
 
-    for(int y=0; y<size.getY(); y++){
+    for(int y=0; y<sizeY; y++){
         for(int x=0; x<size.getX()+2; x++){
-            background->setPixel(position.getX() + x, position.getY() + y, cardPixels[i]);
-            i++;
+            background->setPixel(position.getX() + x, position.getY() + y, COLOR_WHITE);
         }
     }
 
     //draw the suit icon on the card
     drawRankAndSuitIcons(background, rank, suit);
 
-    char str[32];
-    sprintf(str, "PCX is %dx%d", blankCard.getHeader().HScrSize, blankCard.getHeader().VScrSize);
-    text->putString(str, strlen(str), TEXTCELL(0, 3), COLOR_WHITE, FONT_6x8);
+    //char str[32];
+    //sprintf(str, "PCX is %dx%d", blankCard.getHeader().HScrSize, blankCard.getHeader().VScrSize);
+    //text->putString(str, strlen(str), TEXTCELL(0, 3), COLOR_WHITE, FONT_6x8);
     
 }

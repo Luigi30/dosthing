@@ -1,5 +1,7 @@
 /* entrypoint */
 #include "main.hpp"
+#include <cstdlib>
+#include <time>
 
 /* Functions */
 void init_global_pointers(){
@@ -126,7 +128,8 @@ void load_palette(char *filename){
 
 int main () {
     DEBUG("Serial connected\r\n");
-       
+
+    std::srand(std::time(NULL)); 
     sleep(1);
 
     init_timer(4970); //240Hz timer    
