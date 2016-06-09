@@ -1,3 +1,5 @@
+/* Blackjack routines and hardcoded variable junk. */
+
 #ifndef BLACKJACK_HPP
 #define BLACKJACK_HPP
 
@@ -19,7 +21,21 @@
 #include "widgets\cardgfx.hpp"
 
 #include "bjack\deck.hpp"
+#include "bjack\hand.hpp"
+
+enum BLACKJACK_GAME_STATE { HAND_ENDED, PLAYER_TAKING_ACTION, DEALER_TAKING_ACTION, FINDING_WINNER };
+
+Hand playerHand;
+Hand dealerHand;
+BLACKJACK_GAME_STATE GAME_STATE;
 
 void blackjack();
+void doGameAction(std::string widgetClicked);
+
+//Graphical constants
+Point PLAYER_CARD_START_POSITION = Point(40,60);
+Point DEALER_CARD_START_POSITION = Point(205,60);
+//Point CARD_INTERVAL = Point(55,0); //card position = CARD_START_POSITION + (CARD_INTERVAL * cardNumber)
+Point CARD_INTERVAL = Point(15,5); //Diagonal
 
 #endif

@@ -24,6 +24,10 @@ class Point {
             Point point = Point(this->x + two.x, this->y + two.y);
             return point;
         }
+        Point operator*(const int multiplier){
+            Point point = Point(this->x * multiplier, this->y * multiplier);
+            return point;
+        }
 };
 
 typedef Point Size2D;

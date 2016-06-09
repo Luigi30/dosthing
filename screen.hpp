@@ -27,11 +27,16 @@ class Screen {
     
     public:
     Framebuffer layer_background;
+    Framebuffer layer_widgets;
     Framebuffer layer_text;
     Framebuffer layer_final;
 
-    std::vector<Widget*> widgetsList;
+    void drawMouseCursor(Framebuffer layer);
     Widget* getClickedWidget(Point);
+    std::string getClickedWidgetName(Point);
+
+    std::vector<Widget*> widgetsList;
+    void removeWidget(std::string _name);
 
     void addButton(Button);
     void drawButton(Button);

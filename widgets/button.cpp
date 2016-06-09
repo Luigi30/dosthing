@@ -12,27 +12,27 @@ W_Button::W_Button(std::string _name, Point _pos, ButtonShape _shape, Size2D _si
     isDown = false;
 };
 
-void W_Button::redraw(Framebuffer *layer_background, Framebuffer *layer_text){
+void W_Button::redraw(Framebuffer *layer, Framebuffer *layer_text){
 
     if(!isDown){
         //Draw a rectangle at position.
         layer_text->putString("Drawing up button!  ", strlen("Drawing up button!  "), Point(0, 8), COLOR_WHITE, FONT_4x6);
 
-        layer_background->draw_rectangle_filled(position, size.getX(), size.getY(), COLOR_LTGRAY);
+        layer->draw_rectangle_filled(position, size.getX(), size.getY(), COLOR_LTGRAY);
         
         //shading: brighter in the upper and left sides
-        layer_background->draw_line(position,
+        layer->draw_line(position,
             Point(position.getX()+size.getX(), position.getY()),
             COLOR_WHITE);
-        layer_background->draw_line(position,
+        layer->draw_line(position,
             Point(position.getX(), position.getY()+size.getY()),
             COLOR_WHITE);
 
         //darker in the right and bottom sides
-        layer_background->draw_line(Point(position.getX()+size.getX(), position.getY()),
+        layer->draw_line(Point(position.getX()+size.getX(), position.getY()),
             Point(position.getX()+size.getX(), position.getY()+size.getY()),
             COLOR_DKGRAY);
-        layer_background->draw_line(Point(position.getX(), position.getY()+size.getY()),
+        layer->draw_line(Point(position.getX(), position.getY()+size.getY()),
             Point(position.getX()+size.getX(), position.getY()+size.getY()),
             COLOR_DKGRAY);
 
@@ -44,26 +44,32 @@ void W_Button::redraw(Framebuffer *layer_background, Framebuffer *layer_text){
         //Draw a rectangle at position.
         layer_text->putString("Drawing down button!", strlen("Drawing down button!"), Point(0, 8), COLOR_WHITE, FONT_4x6);
 
-        layer_background->draw_rectangle_filled(position, size.getX(), size.getY(), COLOR_DKGRAY);
+        layer->draw_rectangle_filled(position, size.getX(), size.getY(), COLOR_DKGRAY);
         
         //shading: darker in the upper and left
-        layer_background->draw_line(position,
+        layer->draw_line(position,
             Point(position.getX()+size.getX(), position.getY()),
             COLOR_LTGRAY);
-        layer_background->draw_line(position,
+        layer->draw_line(position,
             Point(position.getX(), position.getY()+size.getY()),
             COLOR_LTGRAY);
 
         //lighter in the lower and right
-        layer_background->draw_line(Point(position.getX()+size.getX(), position.getY()),
+        layer->draw_line(Point(position.getX()+size.getX(), position.getY()),
             Point(position.getX()+size.getX(), position.getY()+size.getY()),
             COLOR_WHITE);
-        layer_background->draw_line(Point(position.getX(), position.getY()+size.getY()),
+        layer->draw_line(Point(position.getX(), position.getY()+size.getY()),
             Point(position.getX()+size.getX(), position.getY()+size.getY()),
             COLOR_WHITE);
 
         //now draw the text
-        layer_text->putString(text.c_str(), text.length(), Point(position.getX(), position.getY() + ((size.getY() - 6)/2)), COLOR_BLUE, FONT_4x6);
+        std::string spaces = "";
+        for(int i=0;i<text.length();i++){
+            spaces.append(" ");
+        }
+        
+        layer_text->putString(spaces.c_str(), spaces.length(), Point(position.getX(), position.getY() + ((size.getY() - 6)/2)), COLOR_BLUE, FONT_4x6); 
+        layer_text->putString(text.c_str(), text.length(), Point(position.getX()+1, position.getY()+1 + ((size.getY() - 6)/2)), COLOR_BLUE, FONT_4x6);
     }
     
     

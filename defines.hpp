@@ -1,3 +1,5 @@
+/* A big mess of defines that need to be reorganized. */
+
 #ifndef GLOBALVARS_HPP
 #define GLOBALVARS_HPP
 

@@ -20,7 +20,8 @@ class Widget {
     virtual std::string getName();
     Point getPosition() { return position; };
     virtual void onClick(){};
-    virtual void redraw(Framebuffer *background, Framebuffer *text){};
+    virtual void redraw(Framebuffer *layer, Framebuffer *text){};
+    virtual void remove(Framebuffer *layer, Framebuffer *text){};
     virtual int pointIsInside(Point);
 };
 

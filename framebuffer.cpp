@@ -9,11 +9,6 @@ unsigned char *Framebuffer::getPixels(){
     return pixels;
 }
 
-void Framebuffer::draw_point(Point point, int color){
-    //Set an individual pixel to a color.
-    pixels[(320*point.getY()) + point.getX()] = color; 
-}
-
 void Framebuffer::draw_line(Point start, Point end, int color){
     //Draw a 1-pixel thick line between two points.
     int x_distance = end.getX() - start.getX();
@@ -95,12 +90,18 @@ void Framebuffer::setPixel(int x, int y, int color){
     pixels[coord] = color;
 }
 
+
+void Framebuffer::setPixel(Point point, int color){
+    //Set an individual pixel to a color.
+    pixels[(VGA_WIDTH * point.getY()) + point.getX()] = color; 
+}
+
 void Framebuffer::overlay(Framebuffer source, int size){
     //Copy one framebuffer on top of another.
     //Any pixels in the source of color 0x00 will be considered transparent.
     
     for(UInt32 i=0;i<size;i++){
-        if(source.getPixels()[i] > 0x00){
+        if(source.getPixels()[i] != 0x00){
             pixels[i] = source.getPixels()[i];
         }
     }

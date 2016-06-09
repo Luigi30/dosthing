@@ -1,3 +1,5 @@
+/* A deck of cards. */
+
 #ifndef DECK_HPP
 #define DECK_HPP
 

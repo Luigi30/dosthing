@@ -9,7 +9,12 @@ struct MouseData {
     int y;    
 };
 
-int isMouseAttached();
-void cursorEnable();
-void cursorDisable();
-MouseData getMouseData();
+class Mouse {
+
+    public:
+    static int isMouseAttached();
+    static void cursorEnable();
+    static void cursorDisable();
+    static MouseData getMouseData();
+
+};

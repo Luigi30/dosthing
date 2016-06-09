@@ -2,20 +2,7 @@
 
     char Card::getRank(){
         if(id == -1) return '?';
-        switch((id % 13) + 1) {
-            case 1:
-                return 'A';
-            case 10:
-                return 'T';
-            case 11:
-                return 'J';
-            case 12:
-                return 'Q';
-            case 13:
-                return 'K';
-            default:
-                return 0x30 + (id % 13) + 1;
-        }
+        return rankIntToChar((id % 13) + 1);
     }
 
     char Card::getSuit() {
@@ -26,8 +13,8 @@
         else return '?';
     }
 
-    static int Card::rankCharToInt(char rank){
-        switch (rank) {
+    static int Card::rankCharToInt(char _rank){
+        switch (_rank) {
         case 'A':
             return 1;
         case 'T':
@@ -39,8 +26,25 @@
         case 'K':
             return 13;
         default:
-            return rank - 0x30;
+            return _rank - 0x30;
         }
+    }
+
+    static int Card::rankIntToChar(int _rank){
+        switch(_rank) {
+            case 1:
+                return 'A';
+            case 10:
+                return 'T';
+            case 11:
+                return 'J';
+            case 12:
+                return 'Q';
+            case 13:
+                return 'K';
+            default:
+                return 0x30 + _rank;
+        }        
     }
 
     Card::Card(int _id){

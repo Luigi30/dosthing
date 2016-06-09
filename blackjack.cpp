@@ -29,77 +29,193 @@ void exit_program(std::string msg) {
 }
 
 void dealHand(){
-    //reset deck between hands
-    deck = Deck();
+    //Deal a hand.
+
+    deck = Deck(); //reset deck between hands
+
+    //delete the existing card widgets
+    for(int i=0;i<6;i++){
+        g_screen.removeWidget("playerCard" + (i + 0x30));
+        g_screen.removeWidget("dealerCard" + (i + 0x30));
+    }
+
+    //reset the player's hand and add the new card widgets to the screen
+    playerHand.clear();
+    playerHand.addCard(deck.getRandomCard());
+    playerHand.addCard(deck.getRandomCard());
+
+    g_screen.widgetsList.push_back(new W_Card_Graphic("playerCard1", PLAYER_CARD_START_POSITION, playerHand.getCards()[0]));
+    g_screen.widgetsList.push_back(new W_Card_Graphic("playerCard2", PLAYER_CARD_START_POSITION + CARD_INTERVAL, playerHand.getCards()[1]));
+
+    //reset the dealer's hand and add the new card widgets to the screen
+    dealerHand.clear();
+    dealerHand.addCard(deck.getRandomCard());
+    dealerHand.addCard(deck.getRandomCard());
+
+    g_screen.widgetsList.push_back(new W_Card_Graphic("dealerCard1", DEALER_CARD_START_POSITION, dealerHand.getCards()[0]));
+    g_screen.widgetsList.push_back(new W_Card_Graphic("dealerCard2", DEALER_CARD_START_POSITION + CARD_INTERVAL, dealerHand.getCards()[1]));        
+}
+
+void playerHit(){
+    //The player hit...
+    playerHand.addCard(deck.getRandomCard());
+    int numCards = playerHand.numCards();
+    char str[4];
+    itoa(numCards, str, 10);
     
-    g_screen.layer_text.putString("Deal!", strlen("Deal!"), TEXTCELL(0, 3), COLOR_WHITE, FONT_6x8);
-    Card card1 = deck.getRandomCard();  
-    char strCard[32];
-    sprintf(strCard, "Drew %c%c", card1.getRank(), card1.getSuit());
-    g_screen.layer_text.putString(strCard, strlen(strCard), TEXTCELL(0, 4), COLOR_WHITE, FONT_6x8);
+    std::string widgetName = "playerCard" + std::string(str);
+    Point cardPosition = PLAYER_CARD_START_POSITION;
 
-    Card card2 = deck.getRandomCard();  
-    sprintf(strCard, "Drew %c%c", card2.getRank(), card2.getSuit());
-    g_screen.layer_text.putString(strCard, strlen(strCard), TEXTCELL(0, 5), COLOR_WHITE, FONT_6x8);
+    for(int i=0;i<numCards-1;i++){
+        cardPosition = cardPosition + CARD_INTERVAL;
+    }
+    
+    g_screen.widgetsList.push_back(new W_Card_Graphic(widgetName, cardPosition, playerHand.getCards()[numCards-1]));
+}
 
-    g_screen.widgetsList.push_back(new W_Card_Graphic("card1", Point(40, 60), card1.getRank(), card1.getSuit()));
-    g_screen.widgetsList.push_back(new W_Card_Graphic("card2", Point(95, 60), card2.getRank(), card2.getSuit()));
+void dealerHit(){
+    ///The dealer hit...
+    dealerHand.addCard(deck.getRandomCard());
+    int numCards = dealerHand.numCards();
+    char str[4];
+    itoa(numCards, str, 10);
+    
+    std::string widgetName = "dealerCard" + std::string(str);
+    Point cardPosition = DEALER_CARD_START_POSITION;
+
+    for(int i=0;i<numCards-1;i++){
+        cardPosition = cardPosition + CARD_INTERVAL;
+    }
+    
+    g_screen.widgetsList.push_back(new W_Card_Graphic(widgetName, cardPosition, dealerHand.getCards()[numCards-1]));   
+}
+
+//What was the result of the hand?
+void playerWins(){
+    g_screen.layer_text.putString("PLAYER WINS! ", strlen("PLAYER WINS! "), TEXTCELL(40, 18), COLOR_WHITE, FONT_6x8);
+}
+void playerLoses(){
+    g_screen.layer_text.putString("PLAYER LOSES!", strlen("PLAYER LOSES!"), TEXTCELL(40, 18), COLOR_WHITE, FONT_6x8);
+}
+void playerPushes(){
+    g_screen.layer_text.putString("PLAYER PUSHED", strlen("PLAYER PUSHED"), TEXTCELL(40, 18), COLOR_WHITE, FONT_6x8);
+}
+
+void doGameAction(std::string widgetClicked){
+    //Blackjack game logic function.
+
+    //always enable the exit widget
+    if(clickingOnWidgetName == "buttonExit") exit_program("Returning to DOS...");
+
+    if(GAME_STATE == HAND_ENDED){
+        //Active: buttonDeal
+        if(clickingOnWidgetName == "buttonDeal") {
+            dealHand();
+            
+            g_screen.removeWidget("buttonDeal");
+            g_screen.widgetsList.push_back(new W_Button("buttonHit",   Point(65, 160),  BUTTON_SHAPE_RECT, Size2D(40, 20), "Hit"));
+            g_screen.widgetsList.push_back(new W_Button("buttonStand", Point(110, 160), BUTTON_SHAPE_RECT, Size2D(40, 20), "Stand"));
+            g_screen.layer_text.putString("PLAYER      ", strlen("PLAYER      "), TEXTCELL(40, 18), COLOR_WHITE, FONT_6x8);
+            GAME_STATE = PLAYER_TAKING_ACTION;
+        }
+    } else if(GAME_STATE == PLAYER_TAKING_ACTION) {
+        //Active: buttonHit and buttonStand
+
+        if(clickingOnWidgetName == "buttonHit") {
+            playerHit();
+            if(playerHand.getTotal() > 21){
+                GAME_STATE = HAND_ENDED;
+                playerLoses();
+                g_screen.removeWidget("buttonHit");
+                g_screen.removeWidget("buttonStand");
+                g_screen.widgetsList.push_back(new W_Button("buttonDeal", Point(20, 160), BUTTON_SHAPE_RECT, Size2D(40, 20), "Deal"));
+            }
+        } else if(clickingOnWidgetName == "buttonStand") {
+            if(dealerHand.getTotal() < 17){
+                dealerHit();
+            }
+
+            if(dealerHand.getTotal() > 21 || playerHand.getTotal() > dealerHand.getTotal()) {
+                playerWins();
+            } else if(dealerHand.getTotal() > playerHand.getTotal()) {
+                playerLoses();
+            } else if(dealerHand.getTotal() == playerHand.getTotal()) {
+                playerPushes();
+            } else {
+                g_screen.layer_text.putString("PLAYER ERROR?", strlen("PLAYER ERROR?"), TEXTCELL(40, 18), COLOR_WHITE, FONT_6x8);
+            }
+                        
+            GAME_STATE = HAND_ENDED;
+            g_screen.widgetsList.push_back(new W_Button("buttonDeal", Point(20, 160), BUTTON_SHAPE_RECT, Size2D(40, 20), "Deal"));
+        }
+    }
+
 }
 
 void blackjack(){
     //Entry point for blackjack game.
+
+    //reset the game state
+    GAME_STATE = HAND_ENDED;
+
+    //load the PCX files
+    W_Card_Graphic::loadGraphics();
      
     //reset the framebuffers
     g_screen.init_framebuffers();
 
-    char str[32] = "Now we need buttons!";
-    g_screen.layer_text.putString(str, strlen(str), TEXTCELL(0, 0), COLOR_WHITE, FONT_6x8);
-
+    //Add the deal and exit button
     g_screen.widgetsList.push_back(new W_Button("buttonDeal", Point(20, 160), BUTTON_SHAPE_RECT, Size2D(40, 20), "Deal"));
     g_screen.widgetsList.push_back(new W_Button("buttonExit", Point(260, 160), BUTTON_SHAPE_RECT, Size2D(40, 20), "Exit"));
 
-    cursorEnable();
+    //Enable the cursor
+    Mouse::cursorEnable();
 
     g_screen.redraw();
 
     while(true){
         while(!timer24Hz){
             //wait for 24Hz timer to fire
-        }
+        }           
 
-        MouseData mouseData = getMouseData();
+        MouseData mouseData = Mouse::getMouseData();
 
-        if(!lmbDown && mouseData.lmb_click){
+        if(mouseData.lmb_click){
             
             //clicking the mouse on a widget
-            lmbDown = true;
-            char clicked[32];
             clickedWidget = g_screen.getClickedWidget(Point(mouseData.x, mouseData.y));
-            clickingOnWidgetName = clickedWidget->getName();
+            if(clickedWidget != NULL){
+                clickingOnWidgetName = clickedWidget->getName();
 
-            //is this a button?
-            W_Button* btn = dynamic_cast<W_Button*>(clickedWidget);
-            if(btn != NULL){
-                btn->isDown = true;
-            };
+                //is this a button?
+                W_Button* btn = dynamic_cast<W_Button*>(clickedWidget);
+                if(btn != NULL){
+                    btn->isDown = true;
+                };
+            }
 
             g_screen.redraw();
             
         }
-        else if(lmbDown && !mouseData.lmb_click && clickingOnWidgetName == g_screen.getClickedWidget(Point(mouseData.x, mouseData.y))->getName()) {
+        else if(!mouseData.lmb_click && clickingOnWidgetName == g_screen.getClickedWidgetName(Point(mouseData.x, mouseData.y))) {
             //released the mouse on the same widget so process our click
-            if(clickingOnWidgetName == "buttonExit") exit_program("Returning to DOS...");
-            else if(clickingOnWidgetName == "buttonDeal") dealHand();
-            lmbDown = 0;
 
-            //is this a button?
-            W_Button* btn = dynamic_cast<W_Button*>(clickedWidget);
-            if(btn != NULL){
-                btn->isDown = false;
-            };
+            doGameAction(clickingOnWidgetName);
+
+            if(clickedWidget != NULL) {
+                //is this a button?
+                W_Button* btn = dynamic_cast<W_Button*>(clickedWidget);
+                if(btn != NULL){
+                    btn->isDown = false;
+                };
+            }
+
+            clickingOnWidgetName = "";
             
             g_screen.redraw();
             
+        } else if(!mouseData.lmb_click) {
+            clickingOnWidgetName = "";
         }
 
         /*

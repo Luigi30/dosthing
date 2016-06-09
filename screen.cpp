@@ -1,19 +1,27 @@
 #include "screen.hpp"
+#include "mouse.hpp"
 
 void Screen::redraw(){
     //render buttons to layer_background and text to layer_text
+    memset(layer_widgets.getPixels(), 0, VGA_SIZE);
     for(int i=0;i<widgetsList.size();i++){
-        widgetsList[i]->redraw(&layer_background, &layer_text);
+        widgetsList[i]->redraw(&layer_widgets, &layer_text);
     }
     
     memset(layer_final.getPixels(), 0, VGA_SIZE);    
     layer_final.overlay(layer_background, VGA_SIZE);
-    layer_final.overlay(layer_text, VGA_SIZE);    
-    memcpy(VGA_PTR, layer_final.getPixels(), VGA_SIZE);    
+    layer_final.overlay(layer_widgets, VGA_SIZE);
+    layer_final.overlay(layer_text, VGA_SIZE);
+
+    //disable cursor while redrawing or we get graphic garbage on screen
+    Mouse::cursorDisable();
+    memcpy(VGA_PTR, layer_final.getPixels(), VGA_SIZE);
+    Mouse::cursorEnable();
 }
 
 void Screen::init_framebuffers(){
     layer_background    = Framebuffer();
+    layer_widgets       = Framebuffer();
     layer_text          = Framebuffer();
     layer_final         = Framebuffer();    
 }
@@ -26,21 +34,21 @@ void Screen::drawButton(Button _button){
     
 //Draw a rectangle at position.
     //if(shape == BUTTON_SHAPE_RECT) {
-        layer_background.draw_rectangle_filled(_button.position, _button.sizeX, _button.sizeY, COLOR_LTGRAY);
+        layer_widgets.draw_rectangle_filled(_button.position, _button.sizeX, _button.sizeY, COLOR_LTGRAY);
         
         //shading: brighter in the upper and left sides
-        layer_background.draw_line(_button.position,
+        layer_widgets.draw_line(_button.position,
                 Point(_button.position.getX()+_button.sizeX, _button.position.getY()),
                 COLOR_WHITE);
-        layer_background.draw_line(_button.position,
+        layer_widgets.draw_line(_button.position,
                 Point(_button.position.getX(), _button.position.getY()+_button.sizeY),
                 COLOR_WHITE);
 
         //darker in the right and bottom sides
-        layer_background.draw_line(Point(_button.position.getX()+_button.sizeX, _button.position.getY()),
+        layer_widgets.draw_line(Point(_button.position.getX()+_button.sizeX, _button.position.getY()),
                 Point(_button.position.getX()+_button.sizeX, _button.position.getY()+_button.sizeY),
                 COLOR_DKGRAY);
-        layer_background.draw_line(Point(_button.position.getX(), _button.position.getY()+_button.sizeY),
+        layer_widgets.draw_line(Point(_button.position.getX(), _button.position.getY()+_button.sizeY),
                 Point(_button.position.getX()+_button.sizeX, _button.position.getY()+_button.sizeY),
                 COLOR_DKGRAY);
     //}
@@ -57,4 +65,25 @@ Widget* Screen::getClickedWidget(Point _point){
         }
     }
     return NULL;
+}
+
+std::string Screen::getClickedWidgetName(Point _point){
+    Widget *clicked = getClickedWidget(_point);
+    if(clicked != NULL){
+        return clicked->getName();
+    } else {
+        return NULL;
+    }
+}
+
+void Screen::removeWidget(std::string _name){
+    //locate widget with the matching name and remove it from the list
+    //widget names must be unique
+    
+    for(int i=0;i<widgetsList.size();i++){
+        if(widgetsList[i]->getName() == _name){
+            widgetsList.erase(widgetsList.begin() + i);
+            return;
+        }
+    }
 }
