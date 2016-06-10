@@ -95,7 +95,7 @@ void playerWins(){
     g_screen.layer_text.putString("PLAYER WINS! ", strlen("PLAYER WINS! "), TEXTCELL(40, 18), COLOR_WHITE, FONT_6x8);
 }
 void playerLoses(){
-    g_screen.layer_text.putString("PLAYER LOSES!", strlen("PLAYER LOSES!"), TEXTCELL(40, 18), COLOR_WHITE, FONT_6x8);
+    g_screen.layer_text.putString("PLAYER LOSES", strlen("PLAYER LOSES"), TEXTCELL(40, 18), COLOR_WHITE, FONT_6x8);
 }
 void playerPushes(){
     g_screen.layer_text.putString("PLAYER PUSHED", strlen("PLAYER PUSHED"), TEXTCELL(40, 18), COLOR_WHITE, FONT_6x8);
@@ -170,6 +170,16 @@ void blackjack(){
 
     //Enable the cursor
     Mouse::cursorEnable();
+
+    PCX backgroundGraphic = PCX("BKGROUND.PCX");
+    unsigned char *backgroundPixels = backgroundGraphic.getPixelData();
+    int i=0;
+    for(int y=0;y<200;y++){
+        for(int x=0;x<320;x++){
+            g_screen.layer_background.setPixel(x, y, backgroundPixels[i]);
+        }
+        i++;
+    }
 
     g_screen.redraw();
 

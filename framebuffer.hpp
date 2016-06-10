@@ -15,6 +15,7 @@ class Framebuffer {
     void draw_polygon(Point points[], int num_points, Point origin, int rotation_angle, int color);
     void draw_rectangle(Point, int, int, int, int);
     void draw_rectangle_filled(Point, int, int, int);
+    void draw_area(unsigned char *source, Point start, Size2D size);
     void setPixel(Point, int);
     void setPixel(int, int, int);
     void overlay(Framebuffer source, int size);

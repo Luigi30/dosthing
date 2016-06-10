@@ -107,6 +107,16 @@ void Framebuffer::overlay(Framebuffer source, int size){
     }
 }
 
+void Framebuffer::draw_area(unsigned char *source, Point start, Size2D size){
+    int i=0;
+    for(int y=start.getY(); y<start.getY() + size.getY(); y++){
+        for(int x=start.getX(); x<start.getX() + size.getX(); x++){
+            pixels[(y * VGA_SIZE) + x] = source[i];
+            i++;
+        }
+    }
+}
+
 double getSlope(Point start, Point end){
     //m = (startY - endY) / (startX - endX)
     return (double)(start.getY() - end.getY()) / (start.getX() - end.getX());
