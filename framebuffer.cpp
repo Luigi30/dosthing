@@ -1,11 +1,11 @@
 #include "framebuffer.hpp"
 
 Framebuffer::Framebuffer(){
-    pixels = (unsigned char*)malloc(64000+1);
+    pixels = (Pixel*)malloc(64000+1);
     memset(pixels, 0, VGA_SIZE);
 }
 
-unsigned char *Framebuffer::getPixels(){
+Pixel *Framebuffer::getPixels(){
     return pixels;
 }
 
@@ -107,11 +107,13 @@ void Framebuffer::overlay(Framebuffer source, int size){
     }
 }
 
-void Framebuffer::draw_area(unsigned char *source, Point start, Size2D size){
+void Framebuffer::draw_area(const Pixel *source, Point start, Size2D size){
     int i=0;
     for(int y=start.getY(); y<start.getY() + size.getY(); y++){
         for(int x=start.getX(); x<start.getX() + size.getX(); x++){
-            pixels[(y * VGA_SIZE) + x] = source[i];
+            if(source[i] != COLOR_TRANSPARENT){
+                pixels[(y * VGA_WIDTH) + x] = source[i];
+            }
             i++;
         }
     }
@@ -144,7 +146,7 @@ Point rotate_degrees(Point point, int rotation_degrees){
 }
 
 /* Font routines */
-void Framebuffer::putGlyph(unsigned char *tile, int sizeX, int sizeY, int destX, int destY, int vga_color){ //8x8 font tile   
+void Framebuffer::putGlyph(Pixel *tile, int sizeX, int sizeY, int destX, int destY, int vga_color){ //8x8 font tile   
     long bytePos = (destY * 320) + destX;
 
     for(int y=0; y<sizeY; y++) {

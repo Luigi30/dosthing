@@ -19,3 +19,5 @@
 //16 grayscale colors.
 //0x10 = darkest, 0x1F = brightest
 #define COLOR_GRAYS     0x10
+
+#define COLOR_TRANSPARENT 0x0D //magic purple
