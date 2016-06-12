@@ -1,4 +1,5 @@
 #include "blackjack.hpp"
+#include "serial.hpp"
 
 W_Button buttons[16];
 int widgetCount = 0;
@@ -35,8 +36,8 @@ void dealHand(){
 
     //delete the existing card widgets
     for(int i=0;i<6;i++){
-        g_screen.removeWidget("playerCard" + (i + 0x30));
-        g_screen.removeWidget("dealerCard" + (i + 0x30));
+        g_screen.removeWidget("playerCard" + i);
+        g_screen.removeWidget("dealerCard" + i);
     }
 
     //reset the player's hand and add the new card widgets to the screen
@@ -44,16 +45,16 @@ void dealHand(){
     playerHand.addCard(deck.getRandomCard());
     playerHand.addCard(deck.getRandomCard());
 
-    g_screen.widgetsList.push_back(new W_Card_Graphic("playerCard1", PLAYER_CARD_START_POSITION, playerHand.getCards()[0]));
-    g_screen.widgetsList.push_back(new W_Card_Graphic("playerCard2", PLAYER_CARD_START_POSITION + CARD_INTERVAL, playerHand.getCards()[1]));
+    g_screen.widgetsList.push_back(new W_Card_Graphic("playerCard1", PLAYER_CARD_START_POSITION, playerHand.getCards()[0], true));
+    g_screen.widgetsList.push_back(new W_Card_Graphic("playerCard2", PLAYER_CARD_START_POSITION + CARD_INTERVAL, playerHand.getCards()[1], true));
 
     //reset the dealer's hand and add the new card widgets to the screen
     dealerHand.clear();
     dealerHand.addCard(deck.getRandomCard());
     dealerHand.addCard(deck.getRandomCard());
 
-    g_screen.widgetsList.push_back(new W_Card_Graphic("dealerCard1", DEALER_CARD_START_POSITION, dealerHand.getCards()[0]));
-    g_screen.widgetsList.push_back(new W_Card_Graphic("dealerCard2", DEALER_CARD_START_POSITION + CARD_INTERVAL, dealerHand.getCards()[1]));        
+    g_screen.widgetsList.push_back(new W_Card_Graphic("dealerCard1", DEALER_CARD_START_POSITION, dealerHand.getCards()[0], true));
+    g_screen.widgetsList.push_back(new W_Card_Graphic("dealerCard2", DEALER_CARD_START_POSITION + CARD_INTERVAL, dealerHand.getCards()[1], false));
 }
 
 void playerHit(){
@@ -70,7 +71,7 @@ void playerHit(){
         cardPosition = cardPosition + CARD_INTERVAL;
     }
     
-    g_screen.widgetsList.push_back(new W_Card_Graphic(widgetName, cardPosition, playerHand.getCards()[numCards-1]));
+    g_screen.widgetsList.push_back(new W_Card_Graphic(widgetName, cardPosition, playerHand.getCards()[numCards-1], true));
 }
 
 void dealerHit(){
@@ -86,8 +87,9 @@ void dealerHit(){
     for(int i=0;i<numCards-1;i++){
         cardPosition = cardPosition + CARD_INTERVAL;
     }
-    
-    g_screen.widgetsList.push_back(new W_Card_Graphic(widgetName, cardPosition, dealerHand.getCards()[numCards-1]));   
+
+    //additional dealer cards would never be given face down
+    g_screen.widgetsList.push_back(new W_Card_Graphic(widgetName, cardPosition, dealerHand.getCards()[numCards-1], true));
 }
 
 //What was the result of the hand?
@@ -102,7 +104,7 @@ void playerPushes(){
 }
 
 void doGameAction(std::string widgetClicked){
-    //Blackjack game logic function.
+    //A widget got clicked, do something.
 
     //always enable the exit widget
     if(clickingOnWidgetName == "buttonExit") exit_program("Returning to DOS...");
@@ -131,25 +133,51 @@ void doGameAction(std::string widgetClicked){
                 g_screen.widgetsList.push_back(new W_Button("buttonDeal", Point(20, 160), BUTTON_SHAPE_RECT, Size2D(40, 20), "Deal"));
             }
         } else if(clickingOnWidgetName == "buttonStand") {
-            if(dealerHand.getTotal() < 17){
-                dealerHit();
-            }
+            //replace dealer's face-down card with a face-up card
+            g_screen.removeWidget("dealerCard2");
+            g_screen.widgetsList.push_back(new W_Card_Graphic("dealerCard2", DEALER_CARD_START_POSITION + CARD_INTERVAL, dealerHand.getCards()[1], true));
 
-            if(dealerHand.getTotal() > 21 || playerHand.getTotal() > dealerHand.getTotal()) {
-                playerWins();
-            } else if(dealerHand.getTotal() > playerHand.getTotal()) {
-                playerLoses();
-            } else if(dealerHand.getTotal() == playerHand.getTotal()) {
-                playerPushes();
-            } else {
-                g_screen.layer_text.putString("PLAYER ERROR?", strlen("PLAYER ERROR?"), TEXTCELL(40, 18), COLOR_WHITE, FONT_6x8);
-            }
-                        
-            GAME_STATE = HAND_ENDED;
-            g_screen.widgetsList.push_back(new W_Button("buttonDeal", Point(20, 160), BUTTON_SHAPE_RECT, Size2D(40, 20), "Deal"));
+            g_screen.removeWidget("buttonHit");
+            g_screen.removeWidget("buttonStand");
+            
+            //start the dealer action timer
+            timerList[0] = Timer(240); //240 ticks = 1 second
+            timerList[0].start();
+                
+            GAME_STATE = DEALER_TAKING_ACTION;
         }
     }
+}
 
+void checkGameState(){
+    //Something automatic is happening, check timers and junk.
+    if(GAME_STATE == DEALER_TAKING_ACTION) {
+        if(timerList[0].getStatus() == TIMER_EXPIRED) {
+            if(dealerHand.getTotal() < 17) {
+                dealerHit();
+                timerList[0].start();
+            } else {
+                GAME_STATE = FINDING_WINNER;
+            }
+        }
+            
+        g_screen.redraw();
+            
+    } else if(GAME_STATE == FINDING_WINNER){
+        if(dealerHand.getTotal() > 21 || playerHand.getTotal() > dealerHand.getTotal()) {
+            playerWins();
+        } else if(dealerHand.getTotal() > playerHand.getTotal()) {
+            playerLoses();
+        } else if(dealerHand.getTotal() == playerHand.getTotal()) {
+            playerPushes();
+        } else {
+            g_screen.layer_text.putString("PLAYER ERROR?", strlen("PLAYER ERROR?"), TEXTCELL(40, 18), COLOR_WHITE, FONT_6x8);
+        }
+            
+        GAME_STATE = HAND_ENDED;
+        g_screen.widgetsList.push_back(new W_Button("buttonDeal", Point(20, 160), BUTTON_SHAPE_RECT, Size2D(40, 20), "Deal"));
+        g_screen.redraw();
+    }
 }
 
 void blackjack(){
@@ -172,21 +200,15 @@ void blackjack(){
     Mouse::cursorEnable();
 
     PCX backgroundGraphic = PCX("BKGROUND.PCX");
-    unsigned char *backgroundPixels = backgroundGraphic.getPixelData();
-    int i=0;
-    for(int y=0;y<200;y++){
-        for(int x=0;x<320;x++){
-            g_screen.layer_background.setPixel(x, y, backgroundPixels[i]);
-        }
-        i++;
-    }
-
+    g_screen.layer_background.draw_area(backgroundGraphic.getPixelData(), Point(0,0), Size2D(VGA_WIDTH, VGA_HEIGHT));
     g_screen.redraw();
 
     while(true){
+        /*
         while(!timer24Hz){
             //wait for 24Hz timer to fire
-        }           
+        }
+        */          
 
         MouseData mouseData = Mouse::getMouseData();
 
@@ -227,6 +249,8 @@ void blackjack(){
         } else if(!mouseData.lmb_click) {
             clickingOnWidgetName = "";
         }
+        
+        checkGameState();
 
         /*
         int key = keyInBuffer();

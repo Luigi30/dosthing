@@ -16,7 +16,7 @@ void W_Button::redraw(Framebuffer *layer, Framebuffer *layer_text){
 
     if(!isDown){
         //Draw a rectangle at position.
-        layer_text->putString("Drawing up button!  ", strlen("Drawing up button!  "), Point(0, 8), COLOR_WHITE, FONT_4x6);
+        //layer_text->putString("Drawing up button!  ", strlen("Drawing up button!  "), Point(0, 8), COLOR_WHITE, FONT_4x6);
 
         layer->draw_rectangle_filled(position, size.getX(), size.getY(), COLOR_LTGRAY);
         
@@ -42,7 +42,7 @@ void W_Button::redraw(Framebuffer *layer, Framebuffer *layer_text){
         //Button is down
 
         //Draw a rectangle at position.
-        layer_text->putString("Drawing down button!", strlen("Drawing down button!"), Point(0, 8), COLOR_WHITE, FONT_4x6);
+        //layer_text->putString("Drawing down button!", strlen("Drawing down button!"), Point(0, 8), COLOR_WHITE, FONT_4x6);
 
         layer->draw_rectangle_filled(position, size.getX(), size.getY(), COLOR_DKGRAY);
         

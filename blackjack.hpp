@@ -19,6 +19,7 @@
 #include "fonts\font.hpp"
 #include "widgets\button.hpp"
 #include "widgets\cardgfx.hpp"
+#include "timer.hpp"
 
 #include "bjack\deck.hpp"
 #include "bjack\hand.hpp"
@@ -31,6 +32,7 @@ BLACKJACK_GAME_STATE GAME_STATE;
 
 void blackjack();
 void doGameAction(std::string widgetClicked);
+void checkGameState();
 
 //Graphical constants
 Point PLAYER_CARD_START_POSITION = Point(40,60);

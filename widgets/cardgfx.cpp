@@ -1,22 +1,24 @@
 #include "cardgfx.hpp"
 #include "..\framebuffer.hpp"
 
-W_Card_Graphic::W_Card_Graphic(std::string _name, Point _position, char _rank, char _suit){
+W_Card_Graphic::W_Card_Graphic(std::string _name, Point _position, char _rank, char _suit, bool _faceUp){
     //size is fixed at 50x60
     name = _name;
     size = Size2D(50, 60);
     position = _position;
     rank = _rank;
     suit = _suit;
+    faceUp = _faceUp;
 }
 
-W_Card_Graphic::W_Card_Graphic(std::string _name, Point _position, Card _card){
+W_Card_Graphic::W_Card_Graphic(std::string _name, Point _position, Card _card, bool _faceUp){
     //size is fixed at 50x60
     name = _name;
     size = Size2D(50, 60);
     position = _position;
     rank = _card.getRank();
     suit = _card.getSuit();
+    faceUp = _faceUp;
 }
 
 int W_Card_Graphic::pointIsInside(Point _point){
@@ -92,5 +94,7 @@ void W_Card_Graphic::drawRankAndSuitIcons(Framebuffer *layer, char rank, char su
 
 void W_Card_Graphic::redraw(Framebuffer *layer, Framebuffer *text){
     layer->draw_area(blankCard.getPixelData(), position, size);
-    drawRankAndSuitIcons(layer, rank, suit);    
+    if(faceUp){
+        drawRankAndSuitIcons(layer, rank, suit);
+    }
 }

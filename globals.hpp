@@ -11,6 +11,7 @@
 #include <vector>
 #include <string>
 
+#include "serial.hpp"
 #include "pcx.hpp"
 #include "framebuffer.hpp"
 #include "screen.hpp"

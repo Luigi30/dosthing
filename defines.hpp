@@ -16,6 +16,7 @@ double PI = 3.14159265;
 #define VGA_HEIGHT 200
 #define VGA_WIDTH 320
 #define VGA_SIZE (VGA_HEIGHT * VGA_WIDTH)
+int VGA_Y_OFFSETS[VGA_HEIGHT];
 
 //Timer
 #define TICKS_PER_SECOND 240
@@ -24,8 +25,7 @@ double PI = 3.14159265;
 //Debug output
 void debugOutput(char *str, int len){
     for(int i=0;i<len;i++){
-        outp(0x3F8, str[i]);
-        delay(1);
+        outp(0x3F8, str[i]); //COM1
     }
 }
 

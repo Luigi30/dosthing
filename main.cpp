@@ -25,6 +25,10 @@ void __interrupt __far timerHandler () {
     if(myTimerTicks % 10 == 0) {
         timer24Hz = 1;
     }
+
+    for(int i=0;i<8;i++){
+        timerList[i].tick();
+    }
     
     // increment the tick counter by the value we loaded into the timer
     biosClockTicks += timerReload;
@@ -126,8 +130,17 @@ void load_palette(char *filename){
         }
 }
 
-int main () {
-    DEBUG("Serial connected\r\n");
+void load_lookup_tables(){
+    //VGA_Y_OFFSETS - offset of the start of a new row of pixels
+    for(int i=0;i<VGA_HEIGHT;i++){
+        VGA_Y_OFFSETS[i] = i * VGA_WIDTH;
+    }
+}
+
+int main(int argc, char *argv[]) {
+    
+    serialPort = Serial(0x3F8, SER_115200_BAUD); //COM1
+    serialPort.sendString("Blackjack connected\r\n");
 
     std::srand(std::time(NULL)); 
     sleep(1);
@@ -137,6 +150,7 @@ int main () {
 
     load_strings();
     load_shapes();
+    load_lookup_tables();
         
     _setvideomode(_MRES256COLOR); //Change to mode 13h
     //load_palette("STTNG.PAL");

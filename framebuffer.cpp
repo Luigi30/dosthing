@@ -86,14 +86,14 @@ void Framebuffer::draw_rectangle_filled(Point origin, int width, int height, int
 }
 
 void Framebuffer::setPixel(int x, int y, int color){
-    unsigned int coord = (VGA_WIDTH * y) + x;
+    unsigned int coord = VGA_Y_OFFSETS[y] + x;
     pixels[coord] = color;
 }
 
 
 void Framebuffer::setPixel(Point point, int color){
     //Set an individual pixel to a color.
-    pixels[(VGA_WIDTH * point.getY()) + point.getX()] = color; 
+    pixels[VGA_Y_OFFSETS[point.getY()] + point.getX()] = color; 
 }
 
 void Framebuffer::overlay(Framebuffer source, int size){
@@ -112,7 +112,7 @@ void Framebuffer::draw_area(const Pixel *source, Point start, Size2D size){
     for(int y=start.getY(); y<start.getY() + size.getY(); y++){
         for(int x=start.getX(); x<start.getX() + size.getX(); x++){
             if(source[i] != COLOR_TRANSPARENT){
-                pixels[(y * VGA_WIDTH) + x] = source[i];
+                pixels[VGA_Y_OFFSETS[y] + x] = source[i];
             }
             i++;
         }

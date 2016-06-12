@@ -22,8 +22,6 @@ PCX::PCX(char *filename){
             printf("%s isn't a PCX file: Invalid header!", filename);
         }
 
-        //printf("OK, PCX file has %d bytes per line\n", header.bytesPerLine);
-
         //Now read the remaining length minus 768 bytes (the palette) in
         data = (unsigned char*)malloc(header.bytesPerLine * getSizeY());
         fread(data, header.bytesPerLine, getSizeY(), pcxFile);

@@ -167,13 +167,14 @@ static unsigned char PCX_SUIT_ICON_SPADE[100];
 class W_Card_Graphic : public Widget {
     char rank;
     char suit;
+    bool faceUp;
     
     public:
     static void loadGraphics();
     
     W_Card_Graphic();
-    W_Card_Graphic(std::string _name, Point _position, char _rank, char _suit);
-    W_Card_Graphic(std::string _name, Point _position, Card _card);
+    W_Card_Graphic(std::string _name, Point _position, char _rank, char _suit, bool _faceUp);
+    W_Card_Graphic(std::string _name, Point _position, Card _card, bool _faceUp);
 
     virtual void redraw(Framebuffer *background, Framebuffer *text);
     virtual int pointIsInside(Point _point);
